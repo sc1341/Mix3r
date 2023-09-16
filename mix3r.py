@@ -67,8 +67,12 @@ def process_words(file):
                 for i in range(0, 8):
                      print_if_not_empty(capitalize_range(line, 0, i))
 
-def print_if_not_empty(s):
+def print_if_not_empty(s, min_len=0, max_len=100):
     # Print s if it is not an empty string
+    if len(s) > max_len or len(s) < min_len:
+        return
+    if "$HEX[" in s and "]" in s: # avoid the HEX values completely 
+        return
     if s.strip():
         print(s)
 

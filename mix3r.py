@@ -27,28 +27,18 @@ def leet_speak(s):
     return ''.join(leet_dict.get(ch, ch) for ch in s)
 
 
-def iteratively_apply_leet(word):
+def simplified_leet_speak(word):
     leet_dict = {
         'a': ['@', '4'],
         'e': ['3'],
         'i': ['1', '!'],
         'o': ['0'],
         's': ['5', '$'],
-        'b': ['|3', '8'],
-        'g': ['9', '&', '6'],
+        'b': ['8', '|3'],
+        'g': ['9', '6'],
         'l': ['1', '|_'],
         't': ['7', '+'],
-        'z': ['2', '%'],
-        'c': ['(', '<', '©'],
-        'd': ['|)', '[)'],
-        'h': ['|-|', ']-[', '}{' ],
-        'm': ['/\/\\', '|\/|'],
-        'r': ['|2', '®'],
-        'f': ['|=', 'ph', '/='],
-        'k': ['|<', '|{', 'X'],
-        'u': ['|_|', 'µ', '\\_/'],
-        'w': ['\/\/', '\^/', 'ω'],
-        'y': ['`/', '¥', '¢']
+        'z': ['2']
     }
 
     def generate_variations(char):
@@ -64,7 +54,6 @@ def iteratively_apply_leet(word):
                 combine_variations(variations, index + 1, current + variation)
 
     combine_variations(variations)
-
 
 
 def process_words(file):
@@ -99,7 +88,7 @@ def process_words(file):
                 print_if_not_empty(''.join(ch for ch in line if ch.lower() not in 'bcdfghjklmnpqrstvwxyz'))  # No consonants
                 print_if_not_empty(line[2:] + line[:2])  # Rotate by 2
                 guess_word_boundary_capitalize(line)  # Guess word boundary and capitalize
-                iteratively_apply_leet(line)
+                simplified_leet_speak(line)
                 # Add different separators if necessary 
                 if ' ' in line:
                     for sep in separators:

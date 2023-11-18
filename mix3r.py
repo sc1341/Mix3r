@@ -27,6 +27,46 @@ def leet_speak(s):
     return ''.join(leet_dict.get(ch, ch) for ch in s)
 
 
+def iteratively_apply_leet(word):
+    leet_dict = {
+        'a': ['@', '4'],
+        'e': ['3'],
+        'i': ['1', '!'],
+        'o': ['0'],
+        's': ['5', '$'],
+        'b': ['|3', '8'],
+        'g': ['9', '&', '6'],
+        'l': ['1', '|_'],
+        't': ['7', '+'],
+        'z': ['2', '%'],
+        'c': ['(', '<', '©'],
+        'd': ['|)', '[)'],
+        'h': ['|-|', ']-[', '}{' ],
+        'm': ['/\/\\', '|\/|'],
+        'r': ['|2', '®'],
+        'f': ['|=', 'ph', '/='],
+        'k': ['|<', '|{', 'X'],
+        'u': ['|_|', 'µ', '\\_/'],
+        'w': ['\/\/', '\^/', 'ω'],
+        'y': ['`/', '¥', '¢']
+    }
+
+    def generate_variations(char):
+        return leet_dict.get(char.lower(), [char])
+
+    variations = [generate_variations(char) for char in word]
+    
+    def combine_variations(variations, index=0, current=''):
+        if index == len(variations):
+            print(current)
+        else:
+            for variation in variations[index]:
+                combine_variations(variations, index + 1, current + variation)
+
+    combine_variations(variations)
+
+
+
 def process_words(file):
     with open(file, 'r', errors='ignore') as f:
         for line in f:
@@ -59,6 +99,7 @@ def process_words(file):
                 print_if_not_empty(''.join(ch for ch in line if ch.lower() not in 'bcdfghjklmnpqrstvwxyz'))  # No consonants
                 print_if_not_empty(line[2:] + line[:2])  # Rotate by 2
                 guess_word_boundary_capitalize(line)  # Guess word boundary and capitalize
+                iteratively_apply_leet(line)
                 # Add different separators if necessary 
                 if ' ' in line:
                     for sep in separators:
@@ -78,7 +119,7 @@ def print_if_not_empty(s, min_len=0, max_len=100):
 
 def guess_word_boundary_capitalize(s):
     # Guess word boundary and capitalize
-    for avg_word_length in range(2, 10):  # We will guess with avg_word_length from range
+    for avg_word_length in range(2, 12):  # We will guess with avg_word_length from range
         if len(s) <= avg_word_length:
             print_if_not_empty(s.capitalize())
         else:

@@ -1,31 +1,20 @@
 #!/usr/bin/env python3
 """
-mix3r.py - Mixes wordlists into common patterns
-
+mix3r.py - Mixes wordlists into common patterns that have been seen in real-world pentests.
+By: sc1341
+Last updated: January 13, 2024
 """
+
 import sys
 import random
 import string
 import os
 
-separators = ['-','.',',','*', '_', '=', '+', "@"]
+separators = ['-','.',',','*', '_', '=', '+', "@", '?','|']
 special_chars = ['!','@','#','$','%','^','&','*','(',')','_','-','+','=','`','~', '{', '}','|', '?', '<', '>', ':', ';']
 
 def random_case(s):
     return ''.join(random.choice([str.upper, str.lower])(ch) for ch in s)
-
-
-def leet_speak(s):
-    leet_dict = {
-        'a': '4', 'A': '4',
-        'e': '3', 'E': '3',
-        'i': '1', 'I': '1',
-        'o': '0', 'O': '0',
-        's': '5', 'S': '5',
-        't': '7', 'T': '7',
-    }
-    return ''.join(leet_dict.get(ch, ch) for ch in s)
-
 
 def simplified_leet_speak(word):
     leet_dict = {
@@ -83,7 +72,6 @@ def process_words(file):
                 print_if_not_empty(line[::-1].upper())  # Reverse Capitalized
                 print_if_not_empty(line.swapcase())  # Swap case
                 print_if_not_empty(line * 2)  # Repeat line
-                print_if_not_empty(leet_speak(line))  # Leet speak
                 print_if_not_empty(line + str(random.randint(1, 100)))  # Random number at end
                 print_if_not_empty(''.join(ch for ch in line if ch.lower() not in 'bcdfghjklmnpqrstvwxyz'))  # No consonants
                 print_if_not_empty(line[2:] + line[:2])  # Rotate by 2
@@ -97,17 +85,21 @@ def process_words(file):
                 for i in range(0, 8):
                      print_if_not_empty(capitalize_range(line, 0, i))
 
-def print_if_not_empty(s, min_len=0, max_len=100):
-    # Print s if it is not an empty string
+def print_if_not_empty(s, min_len=3, max_len=100):
+    """
+    If the string s is not empty, then send to stdout. This is to prevent junk output.
+    """
     if len(s) > max_len or len(s) < min_len:
         return
-    if "$HEX[" in s and "]" in s: # avoid the HEX values completely 
+    if "$HEX[" in s and "]" in s: # avoid the HEX values completely that sometimes come out.  
         return
     if s.strip():
         print(s)
 
 def guess_word_boundary_capitalize(s):
-    # Guess word boundary and capitalize
+    """
+    Guesses a word boundary from the input and capitalizes it in several iterations. For example, hotcrossbuns = hotCrossbuns, hotcRossbuns, etc.
+    """
     for avg_word_length in range(2, 12):  # We will guess with avg_word_length from range
         if len(s) <= avg_word_length:
             print_if_not_empty(s.capitalize())
@@ -115,8 +107,11 @@ def guess_word_boundary_capitalize(s):
             parts = [s[i:i+avg_word_length].capitalize() for i in range(0, len(s), avg_word_length)]
             print_if_not_empty(''.join(parts))
 
+
 def capitalize_range(word, start, end):
-    # inclusive? 
+    """
+    Capitalizes a word from a specific range. 
+    """
     if len(word) < end:
         return word
     return word[start:end+1].upper() + word[end+1::]
@@ -142,8 +137,8 @@ Usage:
     python3 mix3r.py [wordlist directory or wordlist]
 
 Note:
-    Output is sent to stdout. You can redirect it to a file or pipe it directly into tools like hashcat.
-    This is designed to be used in conjunction with a hashcat rule set, such as OneRuleToRuleThemAll. (https://github.com/NotSoSecure/password_cracking_rules)
+    Output is sent to stdout. You can redirect it to a file or pipe it directly into tools like HashCat.
+    This is designed to be used in conjunction with a hashcat rule set, such as OneRuleToRuleThemAll to ensure enough input is given to HashCat. (https://github.com/NotSoSecure/password_cracking_rules)
 """)
         sys.exit()
     if os.path.isdir(sys.argv[1]):

@@ -56,14 +56,20 @@ def simplified_leet_speak(word) -> str:
 
     variations = [generate_variations(char) for char in word]
     
-    def combine_variations(variations, index=0, current=''):
-        if index == len(variations):
-            print(current)
-        else:
-            for variation in variations[index]:
-                combine_variations(variations, index + 1, current + variation)
+    def combine_variations(variations):
+        """
+        Combine variations iteratively to prevent recursion depth issues.
+        """
+        results = ['']  # Start with an empty string
+        for chars in variations:
+            new_results = []
+            for result in results:
+                for char in chars:
+                    new_results.append(result + char)
+            results = new_results
+        for result in results:
+            print(result)
 
-    combine_variations(variations)
 
 
 def process_words(file):
